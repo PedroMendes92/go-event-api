@@ -14,8 +14,6 @@ type Event struct {
 	UserId      string
 }
 
-var events = []Event{}
-
 func (e Event) Save() error {
 	query := `
 	INSERT INTO events (name, description, location, dateTime, user_id)
@@ -64,4 +62,57 @@ func GetAllEvents() ([]Event, error) {
 	}
 
 	return events, nil
+}
+
+func GetEvent(id int64) (*Event, error) {
+	query := "SELECT * FROM events WHERE id = ?"
+
+	row := db.DB.QueryRow(query, id)
+
+	var event Event
+	err := row.Scan(&event.Id, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserId)
+
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &event, nil
+}
+
+func (e *Event) Update() error {
+	query := `
+	UPDATE events
+	SET name = ?, description = ?, location = ?, dateTime = ? 
+	WHERE id = ?`
+
+	statement, err := db.DB.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+
+	_, err = statement.Exec(e.Name, e.Description, e.Location, e.DateTime, e.Id)
+
+	return err
+}
+
+func (e *Event) Delete() error {
+	query := `DELETE FROM events WHERE id = ?`
+
+	statement, err := db.DB.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+
+	_, err = statement.Exec(e.Id)
+
+	return err
 }

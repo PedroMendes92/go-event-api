@@ -1,0 +1,9 @@
+PUT http://0.0.0.0:8080/events/1
+Content-Type: application/json
+
+{
+  "name": "name for this event",
+  "description": "some nie event",
+  "location": "asdadsad",
+  "dateTime": "2025-01-01T00:00:00Z"
+}
