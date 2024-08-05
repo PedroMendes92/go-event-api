@@ -54,12 +54,11 @@ func createEvent(context *gin.Context) {
 	}
 
 	err = event.Save()
+
 	if err != nil {
-		if err != nil {
-			log.Print("ERROR: ", err)
-			context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not save all the event"})
-			return
-		}
+		log.Print("ERROR: ", err)
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not save all the event"})
+		return
 	}
 	context.JSON(http.StatusCreated, gin.H{"message": "event was created", "event": event})
 }
