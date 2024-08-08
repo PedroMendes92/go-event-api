@@ -1,0 +1,2 @@
+DELETE http://0.0.0.0:8080/events/1/register
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjJAbWFpbC5jb20iLCJleHAiOjE3MjMwODI3OTIsInVzZXJJZCI6Mn0.QIvpTKL-ejmyDcAoYuOZfXg1HQlwcq6o24c2Ou4J5sQ

@@ -1,5 +1,6 @@
 PUT http://0.0.0.0:8080/events/1
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjJAbWFpbC5jb20iLCJleHAiOjE3MjMwODEyMTgsInVzZXJJZCI6Mn0.4u48hw0OLjkKwAYApkIr2W5pL9Ycw2QZQgo12PfRc80
 
 {
   "name": "name for this event",

@@ -2,6 +2,7 @@ package routes
 
 import (
 	"go-event-api/models"
+	"go-event-api/utils"
 	"log"
 	"net/http"
 
@@ -25,6 +26,7 @@ func createUser(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not create user"})
 		return
 	}
+
 	context.JSON(http.StatusCreated, gin.H{"message": "user was created", "user": user})
 }
 
@@ -45,7 +47,15 @@ func login(context *gin.Context) {
 		context.JSON(http.StatusUnauthorized, gin.H{"message": "could not authenticate user"})
 		return
 	}
+	log.Print(user)
+	jwtToken, err := utils.GenerateToken(user.Email, user.ID)
 
-	context.JSON(http.StatusOK, gin.H{"message": "Login successful"})
+	if err != nil {
+		log.Print("LOGIN ERROR: ", err)
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "could not authenticate user"})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Login successful", "token": jwtToken})
 
 }

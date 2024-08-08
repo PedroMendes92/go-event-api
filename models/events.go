@@ -2,6 +2,7 @@ package models
 
 import (
 	"go-event-api/db"
+	"log"
 	"time"
 )
 
@@ -11,10 +12,10 @@ type Event struct {
 	Description string    `binding:"required"`
 	Location    string    `binding:"required"`
 	DateTime    time.Time `binding:"required"`
-	UserId      string
+	UserId      int64
 }
 
-func (e Event) Save() error {
+func (e *Event) Save() error {
 	query := `
 	INSERT INTO events (name, description, location, dateTime, user_id)
 	VALUES (?,?,?,?,?)`
@@ -32,11 +33,13 @@ func (e Event) Save() error {
 		return err
 	}
 
-	_, err = result.LastInsertId()
+	id, err := result.LastInsertId()
 
 	if err != nil {
 		return err
 	}
+
+	e.Id = id
 
 	return nil
 }
@@ -56,6 +59,7 @@ func GetAllEvents() ([]Event, error) {
 		var event Event
 		err := rows.Scan(&event.Id, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserId)
 		if err != nil {
+			log.Print(err)
 			return nil, err
 		}
 		events = append(events, event)
@@ -115,4 +119,43 @@ func (e *Event) Delete() error {
 	_, err = statement.Exec(e.Id)
 
 	return err
+}
+
+func (e *Event) Register(userId int64) error {
+	query := `
+	INSERT INTO registrations (event_id, user_id)
+	VALUES (?,?)`
+
+	statement, err := db.DB.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	_, err = statement.Exec(e.Id, userId)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (e *Event) DeleteRegistration(userId int64) error {
+	query := `
+	DELETE FROM registrations WHERE event_id = ? AND user_id = ?	`
+
+	statement, err := db.DB.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	_, err = statement.Exec(e.Id, userId)
+
+	if err != nil {
+		return err
+	}
+	return nil
 }
