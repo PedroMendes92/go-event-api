@@ -31,7 +31,11 @@ func getEvent(context *gin.Context) {
 	}
 
 	if event == nil {
-		context.Error(serverError.NewHttpError(fmt.Sprintf("Could not find event with id %v", eventId), "", http.StatusNotFound))
+		context.Error(serverError.NewHttpError(
+			fmt.Sprintf("Could not find event with id %v", eventId),
+			"",
+			http.StatusNotFound,
+		))
 		return
 	}
 	context.JSON(http.StatusOK, gin.H{"message": "event was found", "event": event})
