@@ -1,10 +1,11 @@
 package routes
 
 import (
+	"fmt"
 	"go-event-api/models"
+	serverError "go-event-api/server-error"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,13 +21,7 @@ func getEvents(context *gin.Context) {
 }
 
 func getEvent(context *gin.Context) {
-	eventId, err := strconv.ParseInt(context.Param("eventId"), 10, 64)
-
-	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse the event id"})
-		return
-	}
-
+	eventId := context.GetInt64("eventId")
 	event, err := models.GetEvent(eventId)
 
 	if err != nil {
@@ -36,7 +31,7 @@ func getEvent(context *gin.Context) {
 	}
 
 	if event == nil {
-		context.JSON(http.StatusNotFound, gin.H{"message": "Could not find event with id provided"})
+		context.Error(serverError.NewHttpError(fmt.Sprintf("Could not find event with id %v", eventId), "", http.StatusNotFound))
 		return
 	}
 	context.JSON(http.StatusOK, gin.H{"message": "event was found", "event": event})
@@ -66,22 +61,19 @@ func createEvent(context *gin.Context) {
 }
 
 func updateEvent(context *gin.Context) {
-	eventId, err := strconv.ParseInt(context.Param("eventId"), 10, 64)
-
-	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse the event id"})
-		return
-	}
-
 	userId := context.GetInt64("userId")
-	event, err := models.GetEvent(eventId)
+	fmt.Print(context.GetInt64("eventId"))
+	event, err := models.GetEvent(context.GetInt64("eventId"))
 
 	if err != nil {
 		log.Print("ERROR: ", err)
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not get the event"})
 		return
 	}
-
+	if event == nil {
+		context.JSON(http.StatusNotFound, gin.H{"message": "Could not find the event"})
+		return
+	}
 	if event.UserId != userId {
 		context.JSON(http.StatusUnauthorized, gin.H{"message": "Not authorized to change this event"})
 		return
@@ -100,7 +92,7 @@ func updateEvent(context *gin.Context) {
 		return
 	}
 
-	updatedEvent.Id = eventId
+	updatedEvent.Id = context.GetInt64("eventId")
 
 	err = updatedEvent.Update()
 
@@ -115,15 +107,8 @@ func updateEvent(context *gin.Context) {
 }
 
 func deleteEvent(context *gin.Context) {
-	eventId, err := strconv.ParseInt(context.Param("eventId"), 10, 64)
-
-	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse the event id"})
-		return
-	}
-
 	userId := context.GetInt64("userId")
-	event, err := models.GetEvent(eventId)
+	event, err := models.GetEvent(context.GetInt64("eventId"))
 
 	if err != nil {
 		log.Print("ERROR: ", err)
