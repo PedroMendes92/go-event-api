@@ -1,1 +1,2 @@
-DELETE http://0.0.0.0:8080/events/3
+DELETE http://0.0.0.0:8080/events/1
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjJAbWFpbC5jb20iLCJleHAiOjE3MjMyMDYzMDMsInVzZXJJZCI6MX0.f7ae24dZgtxfxccylmStryXJ0gPbLFNnLTsSVs6leKA
