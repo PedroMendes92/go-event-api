@@ -4,7 +4,6 @@ import (
 	"errors"
 	"go-event-api/db"
 	"go-event-api/utils"
-	"log"
 )
 
 type User struct {
@@ -58,7 +57,6 @@ func (u *User) ValidateCredentials() error {
 	err := row.Scan(&u.ID, &hashedPassword)
 
 	if err != nil {
-		log.Print(err)
 		return errors.New("invalid credentials")
 	}
 

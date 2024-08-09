@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"go-event-api/models"
 	serverError "go-event-api/server-error"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,32 +11,22 @@ import (
 
 func getEvents(context *gin.Context) {
 	events, err := models.GetAllEvents()
+
 	if err != nil {
-		log.Print("ERROR: ", err)
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not get all the events"})
+		context.Error(serverError.NewHttpError(
+			"Could not get all the events",
+			err.Error(),
+			http.StatusInternalServerError,
+		))
 		return
 	}
+
 	context.JSON(http.StatusOK, events)
 }
 
 func getEvent(context *gin.Context) {
-	eventId := context.GetInt64("eventId")
-	event, err := models.GetEvent(eventId)
+	event := context.MustGet("event").(*models.Event)
 
-	if err != nil {
-		log.Print("ERROR: ", err)
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not save all the event"})
-		return
-	}
-
-	if event == nil {
-		context.Error(serverError.NewHttpError(
-			fmt.Sprintf("Could not find event with id %v", eventId),
-			"",
-			http.StatusNotFound,
-		))
-		return
-	}
 	context.JSON(http.StatusOK, gin.H{"message": "event was found", "event": event})
 }
 
@@ -47,7 +36,11 @@ func createEvent(context *gin.Context) {
 	err := context.ShouldBindBodyWithJSON(&event)
 
 	if err != nil {
-		context.JSON(http.StatusBadRequest, err.Error())
+		context.Error(serverError.NewHttpError(
+			"Could not parse data into an event",
+			err.Error(),
+			http.StatusBadRequest,
+		))
 		return
 	}
 
@@ -57,83 +50,57 @@ func createEvent(context *gin.Context) {
 	err = event.Save()
 
 	if err != nil {
-		log.Print("ERROR: ", err)
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not save all the event"})
+		context.Error(serverError.NewHttpError(
+			"Could not save the event",
+			err.Error(),
+			http.StatusInternalServerError,
+		))
 		return
 	}
 	context.JSON(http.StatusCreated, gin.H{"message": "event was created", "event": event})
 }
 
 func updateEvent(context *gin.Context) {
-	userId := context.GetInt64("userId")
-	fmt.Print(context.GetInt64("eventId"))
-	event, err := models.GetEvent(context.GetInt64("eventId"))
+	event := context.MustGet("event").(*models.Event)
+
+	err := context.ShouldBindBodyWithJSON(&event)
 
 	if err != nil {
-		log.Print("ERROR: ", err)
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not get the event"})
-		return
-	}
-	if event == nil {
-		context.JSON(http.StatusNotFound, gin.H{"message": "Could not find the event"})
-		return
-	}
-	if event.UserId != userId {
-		context.JSON(http.StatusUnauthorized, gin.H{"message": "Not authorized to change this event"})
+		context.Error(serverError.NewHttpError(
+			fmt.Sprintf("Could not parse data into an event. %v", err.Error()),
+			"",
+			http.StatusBadRequest,
+		))
 		return
 	}
 
-	if event == nil {
-		context.JSON(http.StatusNotFound, gin.H{"message": "Could not find event with id provided"})
-		return
-	}
+	event.Id = context.GetInt64("eventId")
 
-	var updatedEvent models.Event
-	err = context.ShouldBindBodyWithJSON(&updatedEvent)
+	err = event.Update()
 
 	if err != nil {
-		context.JSON(http.StatusBadRequest, err.Error())
+		context.Error(serverError.NewHttpError(
+			fmt.Sprintf("Could not update the event with id %v", event.Id),
+			err.Error(),
+			http.StatusInternalServerError,
+		))
 		return
 	}
 
-	updatedEvent.Id = context.GetInt64("eventId")
-
-	err = updatedEvent.Update()
-
-	if err != nil {
-		log.Print("ERROR: ", err)
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not update the event"})
-		return
-	}
-
-	context.JSON(http.StatusCreated, gin.H{"message": "event was updated", "event": updatedEvent})
-
+	context.JSON(http.StatusCreated, event)
 }
 
 func deleteEvent(context *gin.Context) {
-	userId := context.GetInt64("userId")
-	event, err := models.GetEvent(context.GetInt64("eventId"))
+	event := context.MustGet("event").(*models.Event)
+
+	err := event.Delete()
 
 	if err != nil {
-		log.Print("ERROR: ", err)
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not get the event"})
-		return
-	}
-
-	if event == nil {
-		context.JSON(http.StatusNotFound, gin.H{"message": "Could not find event with id provided"})
-		return
-	}
-
-	if event.UserId != userId {
-		context.JSON(http.StatusUnauthorized, gin.H{"message": "Not authorized to DELETE this event"})
-		return
-	}
-	err = event.Delete()
-
-	if err != nil {
-		log.Print("ERROR:", err)
-		context.JSON(http.StatusNotFound, gin.H{"message": "Could not delete event with id provided"})
+		context.Error(serverError.NewHttpError(
+			fmt.Sprintf("Could not delete event with id %v", event.Id),
+			err.Error(),
+			http.StatusInternalServerError,
+		))
 		return
 	}
 

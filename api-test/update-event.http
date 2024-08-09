@@ -1,10 +1,11 @@
 PUT http://0.0.0.0:8080/events/2
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjJAbWFpbC5jb20iLCJleHAiOjE3MjMxMzYxMzksInVzZXJJZCI6Mn0.pkp4iuiJqD0UMWPARtASJttSfB-ctvcy8iKDQL09ztI
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjJAbWFpbC5jb20iLCJleHAiOjE3MjMxOTY3MTQsInVzZXJJZCI6Mn0.Lp5CCK2XHIsxrk7JrrOVlOE6Sai6MmeURlVMqVllZWc
 
 {
+  "id": 1234,
   "name": "name for this event",
   "description": "some nie event",
-  "location": "asdadsad",
+  "location": "1",
   "dateTime": "2025-01-01T00:00:00Z"
 }

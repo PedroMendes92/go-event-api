@@ -8,10 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ErrorMeta struct {
-	status int
-}
-
 func ErrorHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()
@@ -29,21 +25,28 @@ func ErrorHandler() gin.HandlerFunc {
 func RegisterRoutes(server *gin.Engine) {
 	server.Use(ErrorHandler())
 
+	//MIDDLEWARE Setup
+	checkEventIdParam := middleware.ValidateParam("eventId", "int64")
+
 	authenticatedRoute := server.Group("/")
 	authenticatedRoute.Use(middleware.Authenticate)
 
-	checkEventIdParam := middleware.ValidateParam("eventId", "int64")
+	authenticatedRouteWithEventId := server.Group("/")
+	authenticatedRouteWithEventId.Use(middleware.Authenticate, checkEventIdParam, middleware.LoadEventById)
 
-	// EVENT ROUTES
-	server.GET("/events", getEvents)
-	server.GET("events/:eventId", checkEventIdParam, getEvent)
+	routeWithEventId := server.Group("/")
+	routeWithEventId.Use(checkEventIdParam, middleware.LoadEventById)
 
-	authenticatedRoute.POST("/events", createEvent)
-	authenticatedRoute.PUT("/events/:eventId", checkEventIdParam, updateEvent)
-	authenticatedRoute.DELETE("/events/:eventId", checkEventIdParam, deleteEvent)
-	authenticatedRoute.POST("/events/:eventId/register", checkEventIdParam, registerUserToEvent)
-	authenticatedRoute.DELETE("/events/:eventId/register", checkEventIdParam, removeUserRegistration)
-	//USER ROUTES
 	server.POST("/signup", createUser)
 	server.POST("/login", login)
+
+	server.GET("/events", getEvents)
+
+	routeWithEventId.GET("events/:eventId", getEvent)
+
+	authenticatedRouteWithEventId.POST("/events", createEvent)
+	authenticatedRouteWithEventId.PUT("/events/:eventId", middleware.IsEventOwner, updateEvent)
+	authenticatedRouteWithEventId.DELETE("/events/:eventId", middleware.IsEventOwner, deleteEvent)
+	authenticatedRouteWithEventId.POST("/events/:eventId/register", registerUserToEvent)
+	authenticatedRouteWithEventId.DELETE("/events/:eventId/register", removeUserRegistration)
 }

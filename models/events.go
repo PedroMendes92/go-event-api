@@ -2,7 +2,6 @@ package models
 
 import (
 	"go-event-api/db"
-	"log"
 	"time"
 )
 
@@ -59,7 +58,6 @@ func GetAllEvents() ([]Event, error) {
 		var event Event
 		err := rows.Scan(&event.Id, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserId)
 		if err != nil {
-			log.Print(err)
 			return nil, err
 		}
 		events = append(events, event)
@@ -143,7 +141,7 @@ func (e *Event) Register(userId int64) error {
 
 func (e *Event) DeleteRegistration(userId int64) error {
 	query := `
-	DELETE FROM registrations WHERE event_id = ? AND user_id = ?	`
+	DELETE FROM registrations WHERE event_id = ? AND user_id = ?`
 
 	statement, err := db.DB.Prepare(query)
 

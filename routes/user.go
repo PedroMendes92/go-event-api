@@ -1,9 +1,10 @@
 package routes
 
 import (
+	"fmt"
 	"go-event-api/models"
+	serverError "go-event-api/server-error"
 	"go-event-api/utils"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,15 +16,22 @@ func createUser(context *gin.Context) {
 	err := context.ShouldBindBodyWithJSON(&user)
 
 	if err != nil {
-		context.JSON(http.StatusBadRequest, err.Error())
+		context.Error(serverError.NewHttpError(
+			fmt.Sprintf("Could not parse user data. %v", err.Error()),
+			"",
+			http.StatusBadRequest,
+		))
 		return
 	}
 
 	err = user.Save()
 
 	if err != nil {
-		log.Print("ERROR: ", err)
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not create user"})
+		context.Error(serverError.NewHttpError(
+			"Could not create user",
+			err.Error(),
+			http.StatusInternalServerError,
+		))
 		return
 	}
 
@@ -36,23 +44,33 @@ func login(context *gin.Context) {
 	err := context.ShouldBindBodyWithJSON(&user)
 
 	if err != nil {
-		context.JSON(http.StatusBadRequest, err.Error())
+		context.Error(serverError.NewHttpError(
+			fmt.Sprintf("Could not parse login data. %v", err.Error()),
+			err.Error(),
+			http.StatusBadRequest,
+		))
 		return
 	}
 
 	err = user.ValidateCredentials()
 
 	if err != nil {
-		log.Print(err)
-		context.JSON(http.StatusUnauthorized, gin.H{"message": "could not authenticate user"})
+		context.Error(serverError.NewHttpError(
+			"Not authorized",
+			err.Error(),
+			http.StatusUnauthorized,
+		))
 		return
 	}
-	log.Print(user)
+
 	jwtToken, err := utils.GenerateToken(user.Email, user.ID)
 
 	if err != nil {
-		log.Print("LOGIN ERROR: ", err)
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "could not authenticate user"})
+		context.Error(serverError.NewHttpError(
+			"Could not authenticate user",
+			err.Error(),
+			http.StatusInternalServerError,
+		))
 		return
 	}
 
