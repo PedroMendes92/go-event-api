@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM golang:1.19
+FROM golang:1.22.5
 
 WORKDIR /app
 
@@ -8,8 +8,8 @@ COPY go.mod go.sum ./
 
 RUN go mod download
 
-COPY *.go ./
+COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /event-api
+RUN go build -o /go-event-api
 
-CMD ["/event-api"]
+CMD ["/go-event-api"]

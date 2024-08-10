@@ -20,7 +20,7 @@ type Environment struct {
 func (e *Environment) InitEnvironment() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatal("Error loadign env vars: ", err)
 	}
 
 	e.GoEnv = os.Getenv("GO_ENV")
