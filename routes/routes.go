@@ -5,6 +5,7 @@ import (
 	serverError "go-event-api/server-error"
 	"net/http"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,7 +17,8 @@ func ErrorHandler() gin.HandlerFunc {
 			case serverError.Http:
 				c.AbortWithStatusJSON(e.StatusCode, e)
 			default:
-				c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]string{"message": "Service Unavailable"})
+				sentry.CaptureException(e)
+				c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]string{"message": "Server error. Try again later"})
 			}
 		}
 	}

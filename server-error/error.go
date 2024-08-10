@@ -1,6 +1,8 @@
 package serverError
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Http struct {
 	Description string `json:"description,omitempty"`
