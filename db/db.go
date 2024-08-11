@@ -12,21 +12,18 @@ var DB *sql.DB
 
 func InitDB() {
 	var err error
-	if utils.Env.IsDevMode() {
-		DB, err = sql.Open("sqlite3", utils.Env.DatabaseURL)
-	} else {
-		cfg := mysql.Config{
-			User:                 utils.Env.DatabaseUser,
-			Passwd:               utils.Env.DatabasePassword,
-			Net:                  "tcp",
-			Addr:                 utils.Env.DatabaseURL,
-			ParseTime:            true,
-			DBName:               "events-db",
-			AllowNativePasswords: true,
-		}
-		// Get a database handle.
-		DB, err = sql.Open("mysql", cfg.FormatDSN())
+
+	cfg := mysql.Config{
+		User:                 utils.Env.DatabaseUser,
+		Passwd:               utils.Env.DatabasePassword,
+		Net:                  "tcp",
+		Addr:                 utils.Env.DatabaseURL,
+		ParseTime:            true,
+		DBName:               "events-db",
+		AllowNativePasswords: true,
 	}
+	// Get a database handle.
+	DB, err = sql.Open("mysql", cfg.FormatDSN())
 
 	if err != nil {
 		log.Panic("Could not connect to the DB ", err)

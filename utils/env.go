@@ -19,15 +19,28 @@ type Environment struct {
 
 func (e *Environment) InitEnvironment() {
 	err := godotenv.Load()
+
 	if err != nil {
-		log.Fatal("Error loadign env vars: ", err)
+		log.Print(err)
 	}
 
-	e.GoEnv = os.Getenv("GO_ENV")
-	e.LoggerUrl = os.Getenv("LOGGER_URL")
-	e.DatabaseURL = os.Getenv("DATABASE_URL")
-	e.DatabaseUser = os.Getenv("DATABASE_USER")
-	e.DatabasePassword = os.Getenv("DATABASE_PASSWORD")
+	e.GoEnv = populateEnvVar("GO_ENV")
+	e.LoggerUrl = populateEnvVar("LOGGER_URL")
+	e.DatabaseURL = populateEnvVar("DATABASE_URL")
+	e.DatabaseUser = populateEnvVar("DATABASE_USER")
+	e.DatabasePassword = populateEnvVar("DATABASE_PASSWORD")
+
+	if e.LoggerUrl == "" {
+		log.Panic("Error loading LOGGER_URL env variable")
+	}
+}
+
+func populateEnvVar(varName string) string {
+	result := os.Getenv(varName)
+	if result == "" {
+		log.Panic("Error loading LOGGER_URL env variable")
+	}
+	return result
 }
 
 func (e Environment) IsDevMode() bool {
