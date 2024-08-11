@@ -10,6 +10,8 @@ RUN go mod download
 
 COPY . .
 
+ENV GIN_MODE=release
+
 RUN go build -o /go-event-api
 
 CMD ["/go-event-api"]

@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
@@ -23,6 +24,8 @@ func (e *Environment) InitEnvironment() {
 	if err != nil {
 		log.Print(err)
 	}
+
+	gin.SetMode(gin.ReleaseMode)
 
 	e.GoEnv = populateEnvVar("GO_ENV")
 	e.LoggerUrl = populateEnvVar("LOGGER_URL")
