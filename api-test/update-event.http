@@ -1,9 +1,9 @@
-PUT http://0.0.0.0:8080/events/1
+PUT http://0.0.0.0:8080/events/3
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjJAbWFpbC5jb20iLCJleHAiOjE3MjMyMDYzMDMsInVzZXJJZCI6MX0.f7ae24dZgtxfxccylmStryXJ0gPbLFNnLTsSVs6leKA
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjJAbWFpbC5jb20iLCJleHAiOjE3MjM0NTMzNzAsInVzZXJJZCI6MX0.2joP-40uA0eUme0ZE92088k7_-9NKnaZETZewW6dvyQ
 
 {
   "description": "some event",
-  "location": "1",
+  "location": "1123123",
   "dateTime": "2025-01-01T00:00:00Z"
 }

@@ -1,9 +1,9 @@
 POST  http://0.0.0.0:8080/events
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjJAbWFpbC5jb20iLCJleHAiOjE3MjMzMjI1MjQsInVzZXJJZCI6MX0.60oChMo2CodQTHEdhh6guH31t44n3PQa6EhleOsb474
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjJAbWFpbC5jb20iLCJleHAiOjE3MjM0NTMzNzAsInVzZXJJZCI6MX0.2joP-40uA0eUme0ZE92088k7_-9NKnaZETZewW6dvyQ
 
 {
-	"name" :     		"test event2",
+	"name" :     		"test event3",
 	"description" : "some nie event",
 	"location"  :   "asdadsad",
 	"dateTime"  : 	"2025-01-01T00:00:00.000Z" 
