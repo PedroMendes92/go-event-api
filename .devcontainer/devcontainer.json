@@ -6,6 +6,15 @@
 	"image": "mcr.microsoft.com/devcontainers/go:1-1.22-bookworm",
 	"features": {
 		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"humao.rest-client",
+				"ms-azuretools.vscode-docker",
+				"streetsidesoftware.code-spell-checker"
+			]
+		}
 	}
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
