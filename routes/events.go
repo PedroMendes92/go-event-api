@@ -9,6 +9,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Events-Api godoc
+// @Summary get all events
+// @Schemes
+// @Description
+// @Tags example
+// @Accept json
+// @Produce json
+// @Success 200
+// @Router /events [get]
 func getEvents(context *gin.Context) {
 	events, err := models.GetAllEvents()
 
