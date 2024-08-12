@@ -3,6 +3,7 @@ package routes
 import (
 	"go-event-api/middleware"
 	serverError "go-event-api/server-error"
+	"go-event-api/utils"
 	"net/http"
 
 	"github.com/getsentry/sentry-go"
@@ -29,7 +30,9 @@ func RegisterRoutes(server *gin.Engine) {
 	server.Use(ErrorHandler())
 
 	p := ginprometheus.NewPrometheus("gin")
-	p.Use(server)
+	p.SetMetricsPathWithAuth(server, gin.Accounts{
+		"admin": utils.Env.MetricsPassword,
+	})
 
 	server.POST("/signup", createUser)
 	server.POST("/login", login)

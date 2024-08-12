@@ -16,6 +16,7 @@ type Environment struct {
 	DatabaseURL      string
 	DatabaseUser     string
 	DatabasePassword string
+	MetricsPassword  string
 }
 
 func (e *Environment) InitEnvironment() {
@@ -32,6 +33,7 @@ func (e *Environment) InitEnvironment() {
 	e.DatabaseURL = populateEnvVar("DATABASE_URL")
 	e.DatabaseUser = populateEnvVar("DATABASE_USER")
 	e.DatabasePassword = populateEnvVar("DATABASE_PASSWORD")
+	e.MetricsPassword = populateEnvVar("METRICS_PASSWORD")
 
 	if e.LoggerUrl == "" {
 		log.Panic("Error loading LOGGER_URL env variable")
