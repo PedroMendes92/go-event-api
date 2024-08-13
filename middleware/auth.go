@@ -3,12 +3,21 @@ package middleware
 import (
 	"go-event-api/utils"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 func Authenticate(context *gin.Context) {
-	token := context.Request.Header.Get("Authorization")
+	authString := context.Request.Header.Get("Authorization")
+	values := strings.Split(authString, " ")
+
+	if len(values) != 2 {
+		context.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Invalid Token string"})
+		return
+	}
+
+	token := values[1]
 
 	if token == "" {
 		context.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "request is missing authorization header"})

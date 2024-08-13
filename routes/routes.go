@@ -2,6 +2,9 @@ package routes
 
 import (
 	"go-event-api/middleware"
+	"go-event-api/routes/events"
+	"go-event-api/routes/registration"
+	"go-event-api/routes/user"
 	serverError "go-event-api/server-error"
 	"go-event-api/utils"
 	"net/http"
@@ -34,10 +37,10 @@ func RegisterRoutes(server *gin.Engine) {
 		"admin": utils.Env.MetricsPassword,
 	})
 
-	server.POST("/signup", createUser)
-	server.POST("/login", login)
+	server.POST("/signup", user.CreateUser)
+	server.POST("/login", user.Login)
 
-	server.GET("/events", getEvents)
+	server.GET("/events", events.GetEvents)
 
 	//MIDDLEWARE Setup
 	checkEventIdParam := middleware.ValidateParam("eventId", "int64")
@@ -45,18 +48,18 @@ func RegisterRoutes(server *gin.Engine) {
 	routeWithEventId := server.Group("/")
 	routeWithEventId.Use(checkEventIdParam, middleware.LoadEventById)
 
-	routeWithEventId.GET("events/:eventId", getEvent)
+	routeWithEventId.GET("events/:eventId", events.GetEvent)
 
 	authenticatedRoute := server.Group("/")
 	authenticatedRoute.Use(middleware.Authenticate)
 
-	authenticatedRoute.POST("/events", createEvent)
+	authenticatedRoute.POST("/events", events.CreateEvent)
 
 	authenticatedRouteWithEventId := authenticatedRoute.Group("/")
 	authenticatedRouteWithEventId.Use(checkEventIdParam, middleware.LoadEventById)
 
-	authenticatedRouteWithEventId.PUT("/events/:eventId", middleware.IsEventOwner, updateEvent)
-	authenticatedRouteWithEventId.DELETE("/events/:eventId", middleware.IsEventOwner, deleteEvent)
-	authenticatedRouteWithEventId.POST("/events/:eventId/register", registerUserToEvent)
-	authenticatedRouteWithEventId.DELETE("/events/:eventId/register", removeUserRegistration)
+	authenticatedRouteWithEventId.PUT("/events/:eventId", middleware.IsEventOwner, events.UpdateEvent)
+	authenticatedRouteWithEventId.DELETE("/events/:eventId", middleware.IsEventOwner, events.DeleteEvent)
+	authenticatedRouteWithEventId.POST("/events/:eventId/register", registration.RegisterUserToEvent)
+	authenticatedRouteWithEventId.DELETE("/events/:eventId/register", registration.RemoveUserRegistration)
 }

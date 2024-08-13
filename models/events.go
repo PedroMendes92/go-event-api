@@ -6,12 +6,12 @@ import (
 )
 
 type Event struct {
-	Id          int64
-	Name        string    `binding:"required"`
-	Description string    `binding:"required"`
-	Location    string    `binding:"required"`
-	DateTime    time.Time `binding:"required"`
-	UserId      int64
+	Id          int64     `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Location    string    `json:"location"`
+	DateTime    time.Time `json:"date"`
+	UserId      int64     `json:"userId"`
 }
 
 func (e *Event) Save() error {
@@ -140,8 +140,7 @@ func (e *Event) Register(userId int64) error {
 }
 
 func (e *Event) DeleteRegistration(userId int64) error {
-	query := `
-	DELETE FROM registrations WHERE event_id = ? AND user_id = ?`
+	query := `DELETE FROM registrations WHERE event_id = ? AND user_id = ?`
 
 	statement, err := db.DB.Prepare(query)
 

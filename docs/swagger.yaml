@@ -1,3 +1,104 @@
+definitions:
+  events.createEventInput:
+    properties:
+      date:
+        type: string
+      description:
+        type: string
+      location:
+        type: string
+      name:
+        type: string
+    required:
+    - date
+    - description
+    - location
+    - name
+    type: object
+  events.createEventResponse:
+    properties:
+      event:
+        $ref: '#/definitions/models.Event'
+    type: object
+  events.getEventResponse:
+    properties:
+      event:
+        $ref: '#/definitions/models.Event'
+    type: object
+  events.getEventsResponse:
+    properties:
+      events:
+        items:
+          $ref: '#/definitions/models.Event'
+        type: array
+    type: object
+  events.updateEventInput:
+    properties:
+      date:
+        type: string
+      description:
+        type: string
+      location:
+        type: string
+      name:
+        type: string
+    type: object
+  events.updateEventResponse:
+    properties:
+      event:
+        $ref: '#/definitions/models.Event'
+    type: object
+  models.Event:
+    properties:
+      date:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      location:
+        type: string
+      name:
+        type: string
+      userId:
+        type: integer
+    type: object
+  models.User:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      password:
+        type: string
+    type: object
+  user.createUserInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  user.createUserResponse:
+    properties:
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
+  user.loginInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  user.loginResponse:
+    properties:
+      token:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
@@ -5,12 +106,189 @@ paths:
     get:
       consumes:
       - application/json
+      description: This endpoint will get all available events
       produces:
       - application/json
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/events.getEventsResponse'
       summary: get all events
       tags:
-      - example
+      - events
+    post:
+      consumes:
+      - application/json
+      description: This endpoint will create an event and associate it to the user
+      parameters:
+      - description: new event data
+        in: body
+        name: event
+        required: true
+        schema:
+          $ref: '#/definitions/events.createEventInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/events.createEventResponse'
+      security:
+      - Bearer: []
+      summary: Create an event
+      tags:
+      - events
+  /events/{event_id}:
+    delete:
+      description: This endpoint will delete a specific event
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - Bearer: []
+      summary: Delete event
+      tags:
+      - events
+    get:
+      description: This endpoint will get all available events
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/events.getEventResponse'
+      summary: get all events
+      tags:
+      - events
+    put:
+      consumes:
+      - application/json
+      description: This endpoint will update an event if associated with the user
+      parameters:
+      - description: event data to update
+        in: body
+        name: event
+        required: true
+        schema:
+          $ref: '#/definitions/events.updateEventInput'
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/events.updateEventResponse'
+      security:
+      - Bearer: []
+      summary: Update an event
+      tags:
+      - events
+  /events/{event_id}/register:
+    delete:
+      consumes:
+      - application/json
+      description: This endpoint allows teh logged in user to remove a registration
+        to an event
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: remove a registration
+      tags:
+      - events/registration
+    post:
+      consumes:
+      - application/json
+      description: This endpoint allows logged in user to register to an event
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: register a user
+      tags:
+      - events/registration
+  /login:
+    post:
+      parameters:
+      - description: login data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/user.loginInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.loginResponse'
+      summary: Login user
+      tags:
+      - user
+  /signup:
+    post:
+      parameters:
+      - description: user data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/user.createUserInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.createUserResponse'
+      summary: Create a new user
+      tags:
+      - user
+securityDefinitions:
+  Bearer:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

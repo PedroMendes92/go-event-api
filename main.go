@@ -12,6 +12,12 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// Events-Api godoc
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token.
+// @PersistAuthorization true
 func main() {
 	utils.Env.InitEnvironment()
 	db.InitDB()
