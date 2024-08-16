@@ -13,6 +13,7 @@ var Env Environment
 type Environment struct {
 	GoEnv            string
 	LoggerUrl        string
+	Database         string
 	DatabaseURL      string
 	DatabaseUser     string
 	DatabasePassword string
@@ -33,6 +34,7 @@ func (e *Environment) InitEnvironment() {
 	e.DatabaseURL = populateEnvVar("DATABASE_URL")
 	e.DatabaseUser = populateEnvVar("DATABASE_USER")
 	e.DatabasePassword = populateEnvVar("DATABASE_PASSWORD")
+	e.Database = populateEnvVar("DATABASE")
 	e.MetricsPassword = populateEnvVar("METRICS_PASSWORD")
 
 	if e.LoggerUrl == "" {

@@ -5,7 +5,7 @@
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"image": "mcr.microsoft.com/devcontainers/go:1-1.22-bookworm",
 	"features": {
-		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
 	},
 	"customizations": {
 		"vscode": {
@@ -13,10 +13,11 @@
 				"humao.rest-client",
 				"ms-azuretools.vscode-docker",
 				"streetsidesoftware.code-spell-checker",
-				"github.vscode-github-actions"
+				"github.vscode-github-actions",
+				"IronGeek.vscode-env"
 			]
 		}
-	}
+	},
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {
@@ -27,7 +28,8 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "go version",
+	"postCreateCommand":"chmod 667 ./.devcontainer/postCreateCommand.sh && ./.devcontainer/postCreateCommand.sh"
+
 
 	// Configure tool-specific properties.
 	// "customizations": {},

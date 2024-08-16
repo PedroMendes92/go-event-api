@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS events (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    datetime DATETIME NOT NULL,
+    user_id INT REFERENCES users(id)
+);

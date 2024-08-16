@@ -1,0 +1,25 @@
+services:
+
+  #  start Postgres, and ensure that data is stored to a mounted volume
+  mariadb:
+    image: 'mariadb:latest'
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MARIADB_USER: db-user
+      MARIADB_PASSWORD: db-password
+      MARIADB_ROOT_PASSWORD: my-secret-pw
+      MARIADB_DATABASE: events-db
+
+  #  start mailhog
+  mailhog:
+    image: 'mailhog/mailhog:latest'
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    restart: always
+
+networks:
+  db_network:
+    driver: bridge
