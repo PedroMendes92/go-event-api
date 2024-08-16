@@ -1,7 +1,7 @@
-include .env
-
-$(eval export $(shell sed -ne 's/ *#.*$$//; /./ s/=.*$$// p' .env))
-
+ifneq (,$(wildcard ./.env))
+    include .env
+    export
+endif
 
 BINARY_NAME=go-event-api
 
@@ -41,6 +41,10 @@ restart: stop start
 test:
 	go test -v ./...
 
+migrate-up-all:
+	@echo "Migrating up...${DATABASE}"
+	@migrate -path ./migrations -database "mysql://${DATABASE_USER}:${DATABASE_PASSWORD}@tcp(${DATABASE_URL})/${DATABASE}" up
+
 migrate-down-all:
 	@echo "Migrating down...${DATABASE}"
 	@migrate -path ./migrations -database "mysql://${DATABASE_USER}:${DATABASE_PASSWORD}@tcp(${DATABASE_URL})/${DATABASE}" down
@@ -48,3 +52,5 @@ migrate-down-all:
 migrate-down-one:
 	@echo "Migrating down...${DATABASE}"
 	@migrate -path ./migrations -database "mysql://${DATABASE_USER}:${DATABASE_PASSWORD}@tcp(${DATABASE_URL})/${DATABASE}" down 1
+
+start-prod: migrate-up-all start

@@ -4,6 +4,8 @@ FROM golang:1.22.5
 
 WORKDIR /app
 
+RUN go install -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+
 COPY go.mod go.sum ./
 
 RUN go mod download
@@ -12,6 +14,6 @@ COPY . .
 
 ENV GIN_MODE=release
 
-RUN go build -o /go-event-api
+RUN make build
 
-CMD ["/go-event-api"]
+CMD ["make", "start-prod"]
