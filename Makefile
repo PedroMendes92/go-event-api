@@ -9,13 +9,13 @@ BINARY_NAME=go-event-api
 ## build: Build binary
 build:
 	@echo "Building..."
-	env CGO_ENABLED=0  go build -ldflags="-s -w" -o ${BINARY_NAME} .
+	env CGO_ENABLED=0  go build -ldflags="-s -w" -buildvcs=false -o ${BINARY_NAME} .
 	@echo "Built!"
 
 ## run: builds and runs the application
 run: build
 	@echo "Starting..."
-	./${BINARY_NAME} &
+	./${BINARY_NAME}
 	@echo "Started!"
 
 ## clean: runs go clean and deletes binaries

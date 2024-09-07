@@ -45,7 +45,7 @@ func (e *Environment) InitEnvironment() {
 func populateEnvVar(varName string) string {
 	result := os.Getenv(varName)
 	if result == "" {
-		log.Panic("Error loading LOGGER_URL env variable")
+		log.Panic("Error loading " + varName + " env variable")
 	}
 	return result
 }

@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"go-event-api/utils"
 	"log"
 
@@ -23,6 +24,7 @@ func InitDB() {
 		AllowNativePasswords: true,
 	}
 
+	fmt.Printf("OPEN CONNECTION %v \n", cfg.FormatDSN())
 	// Get a database handle.
 	DB, err = sql.Open("mysql", cfg.FormatDSN())
 
@@ -30,8 +32,11 @@ func InitDB() {
 		log.Panic("*** Error: Could not create DB connector. ", err)
 		return
 	}
+	fmt.Println("CONNECTION CREATED")
 
 	err = DB.Ping()
+
+	fmt.Print("TESTING CONNECTION")
 	if err != nil {
 		log.Panic("*** Error:  Could not connect to DB. ", err)
 		return
