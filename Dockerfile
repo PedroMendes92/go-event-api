@@ -2,6 +2,8 @@
 
 FROM golang:1.24.2-alpine
 
+RUN apk update && apk add --no-cache make
+
 WORKDIR /app
 
 RUN go install -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
